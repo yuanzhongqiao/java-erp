@@ -1,633 +1,315 @@
-<!--
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
--->
-Apache OFBiz®
-============
-
-Welcome to __Apache OFBiz®__! A powerful top level Apache software project.
-OFBiz is an Enterprise Resource Planning (ERP) System written in Java and
-houses a large set of libraries, entities, services and features to run 
-all aspects of your business.
-
-For more details about OFBiz please visit the OFBiz Documentation page:
-
-[OFBiz documentation](http://ofbiz.apache.org/documentation.html)
-
-[OFBiz License](http://www.apache.org/licenses/LICENSE-2.0)
-
-System requirements
--------------------
-
-The only requirement to run OFBiz is to have the Java Development Kit (JDK) 
-version 8 installed on your system (not just the JRE, but the full JDK) which
-you can download from the below link.
-
-[JDK download](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-
->_Note_: if you are using Eclipse, make sure of running the appropriate Eclipse
-command `gradlew eclipse` before creating the project in Eclipse.
-This command will prepare OFBiz for Eclipse with the correct classpath and settings 
-by creating the.classpath and .project files.
-
->_Note_: if you want to use an external DBMS, instead of the embedded Derby, you will need a JDBC driver.
-The only thing you need to do is add a dependency in build.gradle to the MySQL/PostgreSQL/whatever JDBC driver.
-Search in Jcenter for the database driver suitable for the database installed on your production system.
-For example, under the dependencies section you can add something like this for mysql: `runtime 'mysql:mysql-connector-java:5.1.36'`
-Of course you need to make sure the connector is compatible with _your_ version of the database installed!
-
-Quick start
------------
-
-To quickly install and fire-up OFBiz, please follow the below instructions
-from the command line at the OFBiz top level directory (folder)
-
-### Prepare OFBiz:
-
-__Note__: Depending on your Internet connection speed it might take a long
-time for this step to complete if you are using OFBiz for the first time
-as it needs to download all dependencies. So please be patient!
-
-MS Windows:
-`gradlew cleanAll loadDefault`
-
-Unix-like OS:
-`./gradlew cleanAll loadDefault`
-
-### Start OFBiz:
-
-MS Windows:
-`gradlew ofbiz`
-
-Unix-like OS:
-`./gradlew ofbiz`
-
->_Note_: then ignore the % progress indicator because this task does not end as long as OFBiz is running.
-
-
-### Visit OFBiz through your browser:
-
-[Order Back Office](https://localhost:8443/ordermgr)
-
-[Accounting Back Office](https://localhost:8443/accounting)
-
-[Administrator interface](https://localhost:8443/webtools)
-
-You can log in with the user __admin__ and password __ofbiz__.
-
->_Note_: the default configuration uses an embedded Java database
-(Apache Derby) and embedded application server components such as
-Apache Tomcat®, Apache Geronimo (transaction manager), etc.
-
-Security
--------------------
-
-You can trust the OFBiz Project Management Committee members and committers do their best to keep OFBiz secure from external exploits, 
-and fix vulnerabilities as soon as they are known. Despite these efforts, if ever you find and want to report a security issue, please report 
-at: security @ ofbiz.apache.org, before disclosing them in a public forum.
-
->_Note_: Be sure to read this Wiki page if ever you plan to use RMI, JNDI, JMX or Spring and maybe other Java classes OFBiz does not use 
-Out Of The Box (OOTB): [The infamous Java serialization vulnerability](https://cwiki.apache.org/confluence/display/OFBIZ/The+infamous+Java+serialization+vulnerability)
-
-You can find more information about security in OFBiz at [Keeping OFBiz secure](https://cwiki.apache.org/confluence/display/OFBIZ/Keeping+OFBiz+secure) 
-
-
-* * * * * * * * * * * *
-
-Build system syntax
--------------------
-
-All build tasks are executed using the __Gradle__ build system which
-is embedded in OFBiz. To execute build tasks go to OFBiz top-level
-directory (folder) and execute tasks from there.
-
-### Operating System Syntax
-
-The syntax for tasks differ slightly between windows and Unix-like systems
-
-- __Windows__: `gradlew <tasks-in-here>`
-
-- __Unix-like__: `./gradlew <tasks-in-here>`
-
-For the rest of this document, we will use the windows syntax, if you are on
-a Unix-like system, you need to add the `./` to gradlew
-
-### Types of tasks in Gradle
-
-There are two types of tasks designed for OFBiz in Gradle:
-
-- __Standard tasks__: To execute general standard Gradle tasks
-
-- __OFBiz server tasks__: To execute OFBiz startup commands. These
-  tasks start with one of the following words:
-  - __ofbiz__ : standard server commands
-  - __ofbizDebug__ : server commands running in remote debug mode
-  - __ofbizBackground__ ; server commands running in a background forked process
-
-Tips: 
-
-- OFBiz __server commands__ require __"quoting"__ the 
-  commands. For example: `gradlew "ofbiz --help"`
-
-- Shortcuts to task names can be used by writing the
-  first letter of every word in a task name. However, you
-  cannot use the shortcut form for OFBiz server tasks.
-  Example: `gradlew loadAdminUserLogin -PuserLoginId=myadmin` = `gradlew lAUL -PuserLoginId=myadmin`
-
-#### Example standard tasks
-
-`gradlew build`
-
-`gradlew cleanAll loadDefault testIntegration`
-
-#### Example OFBiz server tasks
-
-`gradlew "ofbiz --help"`
-
-`gradlew "ofbizDebug --test"`
-
-`gradlew "ofbizBackground --start --portoffset 10000"`
-
-`gradlew "ofbiz --shutdown --portoffset 10000"`
-
-`gradlew ofbiz` (default is --start)
-
-#### Example mixed tasks (standard and OFBiz server)
-
-`gradlew cleanAll loadDefault "ofbiz --start"`
-
-* * * * * * * * * * * *
-
-Quick reference
----------------
-
-You can use the below common list of tasks as a quick reference
-for controlling the system. This document uses the windows task
-syntax, if you are on a Unix-like system, you need to add the 
-`./` to gradlew i.e. `./gradlew`
-
-* * * * * * * * * * * *
-
-### Help tasks
-
-#### List OFBiz server commands
-
-List all available commands to control the OFBiz server
-
-`gradlew "ofbiz --help"`
-
-#### List build tasks
-
-List all available tasks from the build system
-
-`gradlew tasks`
-
-#### List build projects
-
-List all available projects in the build system
-
-`gradlew projects`
-
-#### Gradle build system help
-
-Show usage and options for the Gradle build system
-
-`gradlew --help`
-
-* * * * * * * * * * * *
-
-### Server command tasks
-
-#### Start OFBiz
-
-`gradlew "ofbiz --start"`
-
-start is the default server task so this also works:
-
-`gradlew ofbiz`
-
-#### Shutdown OFBiz
-
-`gradlew "ofbiz --shutdown"`
-
-#### Get OFBiz status
-
-`gradlew "ofbiz --status"`
-
-#### Force OFBiz shutdown
-
-Terminate all running OFBiz server instances by calling
-the appropriate operating system kill command. Use this
-command to force OFBiz termination if the --shutdown
-command does not work. Usually this is needed when in the
-middle of data loading or testing in OFBiz.
-
-Warning: Be careful in using this command as force termination
-might lead to inconsistent state / data
-
-`gradlew terminateOfbiz`
-
-#### Start OFBiz in remote debug mode
-
-Starts OFBiz in remote debug mode and waits for debugger
-or IDEs to connect on port __5005__
-
-`gradlew "ofbizDebug --start"`
-
-OR
-
-`gradlew ofbizDebug`
-
-#### Start OFBiz on a different port
-
-Start OFBiz of the network port offsetted by the range
-provided in the argument to --portoffset
-
-`gradlew "ofbiz --start --portoffset 10000"`
-
-#### Start OFBiz in the background
-
-Start OFBiz in the background by forking it to a new
-process and redirecting the output to __runtime/logs/console.log__
-
-`gradlew "ofbizBackground --start"`
-
-OR
-
-`gradlew ofbizBackground`
-
-You can also offset the port, for example:
-
-`gradlew "ofbizBackground --start --portoffset 10000"`
-
-* * * * * * * * * * * *
-
-### Data loading tasks
-
-OFBiz contains the following data reader types:
-
-- __seed__: OFBiz and External Seed Data - to be maintained along with source and
-  updated whenever a system deployment is updated
-- __seed-initial__: OFBiz and External Seed Data - to be maintained along with 
-  source like other seed data, but only loaded initially and not updated
-  when a system is updated except manually reviewing each line
-- __demo__: OFBiz Only Demo Data
-- __ext__: External General Data (custom)
-- __ext-test__: External Test Data (custom)
-- __ext-demo__: External Demo Data (custom)
-
-you can choose which data readers to pass in the following syntax:
-
-`gradlew "ofbiz --load-data readers=<readers-here-comma-separated>"`
-
-Example:
-
-`gradlew "ofbiz --load-data readers=seed,seed-initial,ext,ext-demo"`
-
-#### Load default OFBiz data
-
-Loads default data set; meant for initial loading of generic OFBiz data. 
-Can be applied for development, testing, demonstration, etc. purposes. 
-Be aware that executing this task can result in your data being overwritten in your database of choice. 
-Use with caution in production environments. 
-The default data set is defined by datasource using the read-data attribute, 
-followed by the name of the data set, into the datasource element of the 'entityengine.xml' file.
-
-
-`gradlew loadDefault`
-
-OR
-
-`gradlew "ofbiz --load-data"`
-
-#### Load seed data
-
-Load ONLY the seed data (not seed-initial, demo, ext* or anything else);
-meant for use after an update of the code to reload the seed data
-as it is generally maintained along with the code and needs to be
-in sync for operation
-
-`gradlew "ofbiz --load-data readers=seed"`
-
-#### load ext data
-
-Load seed, seed-initial and ext data; meant for manual/generic
-testing, development, or going into production with a derived
-system based on stock OFBiz where the ext data basically
-replaces the demo data
-
-`gradlew "ofbiz --load-data readers=seed,seed-initial,ext"`
-
-#### load ext test data
-
-Load seed, seed-initial, ext and ext-test data; meant for
-automated testing with a derived system based on stock OFBiz
-
-`gradlew "ofbiz --load-data readers=seed,seed-initial,ext,ext-test"`
-
-#### load data from an entity file
-
-Load data from an XML file holding entity data.
-
-`gradlew "ofbiz --load-data file=foo/bar/FileNameHere.xml"`
-
-#### create a new tenant
-
-Create a new tenant in your environment, create the delegator, load
-initial data with admin-user and password (needs multitenant=Y in 
-general.properties). The following project parameters are passed:
-
-- tenantId: mandatory
-- tenantName: optional, default is value of tenantId
-- domainName: optional, default is org.apache.ofbiz
-- tenantReaders: optional, default value is seed,seed-initial,demo
-- dbPlatform: optional, D(Derby), M(MySQL), O(Oracle), P(PostgreSQL) (default D) 
-- dbIp: optional, ip address of the database
-- dbUser: optional, username of the database
-- dbPassword: optional, password of the database
-
-`gradlew createTenant -PtenantId=mytenant`
-
-`gradlew createTenant -PtenantId=mytenant -PtenantName="My Name" -PdomainName=com.example -PtenantReaders=seed,seed-initial,ext -PdbPlatform=M -PdbIp=127.0.0.1 -PdbUser=mydbuser -PdbPassword=mydbpass`
-
-If run successfully, the system creates a new tenant having:
-
-- delegator: default#${tenandId} (e.g. default#mytenant)
-- admin user: ${tenantId}-admin (e.g. mytenant-admin)
-- admin user password: ofbiz
-
-#### load data for a specific tenant
-
-Load data for one specific tenant in a multitenant environment. Note
-that you must set multitenant=Y in general.properties and the
-following project parameters are passed:
-
-- tenantId (mandatory)
-- tenantReaders (optional)
-- tenantComponent (optional)
-
-`gradlew loadTenant -PtenantId=mytenant`
-
-`gradlew loadTenant -PtenantId=mytenant -PtenantReaders=seed,seed-initial,demo -PtenantComponent=base`
-
-* * * * * * * * * * * *
-
-### Testing tasks
-
-#### Execute all unit tests
-
-`gradlew test`
-
-#### Execute all integration tests
-
-`gradlew testIntegration`
-
-OR
-
-`gradlew 'ofbiz --test'`
-
-#### Execute an integration test case
-
-run a test case, in this example the component is "entity" and the case
-name is "entity-tests"
-
-`gradlew "ofbiz --test component=entity --test case=entity-tests"`
-
-#### Execute an integration test case in debug mode
-
-listens on port __5005__
-
-`gradlew "ofbizDebug --test component=entity --test case=entity-tests"`
-
-#### Execute an integration test suite
-
-`gradlew "ofbiz --test component=widget --test suitename=org.apache.ofbiz.widget.test.WidgetMacroLibraryTests"`
-
-#### Execute an integration test suite in debug mode
-
-listens on port __5005__
-
-`gradlew "ofbizDebug --test component=widget --test suitename=org.apache.ofbiz.widget.test.WidgetMacroLibraryTests"`
-
-* * * * * * * * * * * *
-
-### Miscellaneous tasks
-
-#### Launch a graphical user interface of Gradle
-
-This is a very convenient feature of Gradle which
-allows the user to interact with Gradle through a
-swing GUI. You can save frequently used commands
-in a list of favorites for frequent reuse.
-
-`gradlew --gui`
-
-#### Run all tests on a clean system
-
-`gradlew cleanAll loadDefault testIntegration`
-
-#### Clean all generated artifacts
-
-`gradlew cleanAll`
-
-#### Refresh the generated artifacts
-
-`gradlew clean build`
-
-#### Create an admin user account
-
-Create an admin user with login name MyUserName and default password
-with value "ofbiz". Upon first login OFBiz will request changing the
-default password
-
-`gradlew loadAdminUserLogin -PuserLoginId=MyUserName`
-
-#### Compile Java using Xlint output
-
-Xlint prints output of all warnings detected by the compiler
-
-`gradlew -PXlint build`
-
-#### Run OWASP tool to identify dependency vulnerabilities (CVEs)
-
-The below command activates a gradle plugin (OWASP) and Identifies
-and reports known vulnerabilities (CVEs) in OFBiz library dependencies.
-This command takes a long time to execute because it needs to download
-all plugin dependencies and the CVE identification process is also
-time consuming
-
-`gradlew -PenableOwasp dependencyCheck`
-
-#### Setup eclipse project for OFBiz
-
-Setting up OFBiz on eclipse is easy by simply running the below command
-and then importing the project to eclipse. This command will generate
-the necessary __.classpath__ and __.project__ files for eclipse and it
-will also make the source code for external libraries available in
-eclipse (i.e. you can view source through Ctrl + Click)
-
-The first time you run this command it will take a long time to execute
-because it will download source packages available for project
-dependencies.
-
-`gradlew eclipse`
-
-* * * * * * * * * * *
-
-OFBiz plugin system
--------------------
-
-OFBiz provides an extension mechanism through plugins. Plugins are standard
-OFBiz components that reside in the plugins directory. Plugins can be
-added manually or fetched from a maven repository. The standard tasks for
-managing plugins are listed below.
-
->_Note_: OFBiz plugin versions follow [Semantic Versioning 2.0.0](http://semver.org/)
-
-### Pull (download and install) a plugin automatically
-
-Download a plugin with all its dependencies (plugins) and install them one-by-one
-starting with the dependencies and ending with the plugin itself.
-
-`gradlew pullPlugin -PdependencyId="org.apache.ofbiz.plugin:myplugin:0.1.0"`
-
-If the plugin resides in a custom maven repository (not jcenter or localhost) then
-you can use specify the repository using below command:
-
-`gradlew pullPlugin -PrepoUrl="http://www.example.com/custom-maven" -PdependencyId="org.apache.ofbiz.plugin:myplugin:0.1.0"`
-
-If you need username and password to access the custom repository:
-
-`gradlew pullPlugin -PrepoUrl="http://www.example.com/custom-maven" -PrepoUser=myuser -PrepoPassword=mypassword -PdependencyId="org.apache.ofbiz.plugin:myplugin:0.1.0"`
-
-### Pull a source plugin
-
-Download a plugin from source control (currently subversion) and place it in
-the plugins directory. This is mostly useful when working on the trunk branch
-as it requires the latest version of a plugin
-
-`gradlew pullPluginSource -PpluginId=ecommerce`
-
-### Install a plugin
-
-If you have a plugin called mycustomplugin and want to install it in OFBiz follow the
-below instructions:
-
-- Extract the plugin if it is compressed
-- Place the extracted directory into /plugins
-- Run the below command
-
-`gradlew installPlugin -PpluginId=myplugin`
-
-The above commands executes the task "install" in the plugin's build.gradle
-file if it exists
-
-### Uninstall a plugin
-
-If you have an existing plugin called mycustomplugin and you wish to uninstall
-run the below command
-
-`gradlew uninstallPlugin -PpluginId=myplugin`
-
-The above command executes the task "uninstall" in the plugin's build.gradle
-file if it exists
-
-### Remove a plugin
-
-Calls __uninstallPlugin__ on an existing plugin and then delete it from the file-system
-
-`gradlew removePlugin -PpluginId=myplugin` 
-
-### Create a new plugin
-
-Create a new plugin. The following project parameters are passed:
-
-- pluginId: mandatory
-- pluginResourceName: optional, default is the Capitalized value of pluginId
-- webappName: optional, default is the value of pluginId
-- basePermission: optional, default is the UPPERCASE value of pluginId
-
-`gradlew createPlugin -PpluginId=myplugin`
-
-`gradlew createPlugin -PpluginId=myplugin -PpluginResourceName=MyPlugin -PwebappName=mypluginweb -PbasePermission=MYSECURITY`
-
-The above command creates a new plugin in /plugins/myplugin
-
-### Push a plugin to a repository
-
-This task publishes an OFBiz plugin into a maven package and then uploads it to
-a maven repository. Currently, pushing is limited to localhost maven repository
-(work in progress). To push a plugin the following parameters are passed:
-
-- pluginId: mandatory
-- groupId: optional, defaults to org.apache.ofbiz.plugin
-- pluginVersion: optional, defaults to 0.1.0-SNAPSHOT
-- pluginDescription: optional, defaults to "Publication of OFBiz plugin ${pluginId}"
-
-`gradlew pushPlugin -PpluginId=myplugin`
-
-`gradlew pushPlugin -PpluginId=mycompany -PpluginGroup=com.mycompany.ofbiz.plugin -PpluginVersion=1.2.3 -PpluginDescription="Introduce special functionality X"`
-
-
-* * * * * * * * * * * *
-
-Useful Tips
------------
-
-### Gradle tab-completion on Unix-like systems:
-
-To get tab completion (auto complete gradle commands by pressing tab)
-you can download the script from the below link and place it in the
-appropriate location for your system.
-
-[Gradle tab completion](https://gist.github.com/Ea87/46401a96df31cd208a87)
-
-For example, on debian based systems, you can use the following command:
-
-`sudo curl -L -s https://gist.github.com/Ea87/46401a96df31cd208a87/raw/gradle-tab-completion.bash -o /etc/bash_completion.d/gradle-tab-completion.bash`
-
-Crypto notice
--------------
-
-This distribution includes cryptographic software.  The country in
-which you currently reside may have restrictions on the import,
-possession, use, and/or re-export to another country, of
-encryption software.  BEFORE using any encryption software, please
-check your country's laws, regulations and policies concerning the
-import, possession, or use, and re-export of encryption software, to
-see if this is permitted.  See <http://www.wassenaar.org/> for more
-information.
-
-The U.S. Government Department of Commerce, Bureau of Industry and
-Security (BIS), has classified this software as Export Commodity
-Control Number (ECCN) 5D002.C.1, which includes information security
-software using or performing cryptographic functions with asymmetric
-algorithms.  The form and manner of this Apache Software Foundation
-distribution makes it eligible for export under the License Exception
-ENC Technology Software Unrestricted (TSU) exception (see the BIS
-Export Administration Regulations, Section 740.13) for both object
-code and source code.
-
-The following provides more details on the included cryptographic
-software:
-
-- Various classes in OFBiz, including DesCrypt, HashCrypt, and
- BlowFishCrypt use libraries from the Sun Java JDK API including
- java.security.* and javax.crypto.* (the JCE, Java Cryptography
- Extensions API)
-- Other classes such as HttpClient and various related ones use
- the JSSE (Java Secure Sockets Extension) API
+<div class="Box-sc-g0xbh4-0 bJMeLZ js-snippet-clipboard-copy-unpositioned" data-hpc="true"><article class="markdown-body entry-content container-lg" itemprop="text">
+<div class="markdown-heading" dir="auto"><h1 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Apache OFBiz®</font></font></h1><a id="user-content-apache-ofbiz" class="anchor" aria-label="永久链接：Apache OFBiz®" href="#apache-ofbiz"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">欢迎使用</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Apache OFBiz®</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">！一个功能强大的顶级 Apache 软件项目。OFBiz 是一个用 Java 编写的企业资源规划 (ERP) 系统，包含大量库、实体、服务和功能，可用于运行您业务的各个方面。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有关 OFBiz 的更多详细信息，请访问 OFBiz 文档页面：</font></font></p>
+<p dir="auto"><a href="http://ofbiz.apache.org/documentation.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz 文档</font></font></a></p>
+<p dir="auto"><a href="http://www.apache.org/licenses/LICENSE-2.0" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz 许可证</font></font></a></p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">系统要求</font></font></h2><a id="user-content-system-requirements" class="anchor" aria-label="永久链接：系统要求" href="#system-requirements"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行 OFBiz 的唯一要求是在您的系统上安装 Java 开发工具包 (JDK) 版本 8（不仅仅是 JRE，而是完整的 JDK），您可以从下面的链接下载。</font></font></p>
+<p dir="auto"><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">JDK 下载</font></font></a></p>
+<blockquote>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：如果您使用的是 Eclipse，请确保</font></font><code>gradlew eclipse</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在 Eclipse 中创建项目之前运行适当的 Eclipse 命令。此命令将通过创建 .classpath 和 .project 文件，为 Eclipse 准备具有正确类路径和设置的 OFBiz。</font></font></p>
+</blockquote>
+<blockquote>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：如果您想使用外部 DBMS，而不是嵌入式 Derby，您将需要一个 JDBC 驱动程序。您唯一需要做的就是在 build.gradle 中向 MySQL/PostgreSQL/whatever JDBC 驱动程序添加依赖项。在 Jcenter 中搜索适合您生产系统上安装的数据库的数据库驱动程序。例如，在依赖项部分下，您可以为 mysql 添加类似以下内容：</font></font><code>runtime 'mysql:mysql-connector-java:5.1.36'</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+当然，您需要确保连接器与</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安装的数据库版本兼容！</font></font></p>
+</blockquote>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">快速开始</font></font></h2><a id="user-content-quick-start" class="anchor" aria-label="永久链接：快速入门" href="#quick-start"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为了快速安装和启动 OFBiz，请在 OFBiz 顶级目录（文件夹）的命令行中按照以下说明进行操作</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">准备 OFBiz：</font></font></h3><a id="user-content-prepare-ofbiz" class="anchor" aria-label="永久链接：准备 OFBiz：" href="#prepare-ofbiz"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：如果您是第一次使用 OFBiz，则此步骤可能需要很长时间才能完成，因为它需要下载所有依赖项，具体取决于您的 Internet 连接速度。所以请耐心等待！</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">微软 Windows：
+</font></font><code>gradlew cleanAll loadDefault</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类Unix操作系统：
+</font></font><code>./gradlew cleanAll loadDefault</code></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">启动 OFBiz：</font></font></h3><a id="user-content-start-ofbiz" class="anchor" aria-label="永久链接: 启动 OFBiz:" href="#start-ofbiz"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">微软 Windows：
+</font></font><code>gradlew ofbiz</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类Unix操作系统：
+</font></font><code>./gradlew ofbiz</code></p>
+<blockquote>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：忽略%进度指示器，因为只要 OFBiz 正在运行，此任务就不会结束。</font></font></p>
+</blockquote>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">通过浏览器访问 OFBiz：</font></font></h3><a id="user-content-visit-ofbiz-through-your-browser" class="anchor" aria-label="永久链接：通过浏览器访问 OFBiz：" href="#visit-ofbiz-through-your-browser"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><a href="https://localhost:8443/ordermgr" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">订单后台</font></font></a></p>
+<p dir="auto"><a href="https://localhost:8443/accounting" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">会计后台</font></font></a></p>
+<p dir="auto"><a href="https://localhost:8443/webtools" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理员界面</font></font></a></p>
+<p dir="auto"><font style="vertical-align: inherit;"></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您可以使用用户admin</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和密码</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ofbiz</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">登录</font><font style="vertical-align: inherit;">。</font></font></p>
+<blockquote>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：默认配置使用嵌入式 Java 数据库（Apache Derby）和嵌入式应用程序服务器组件，例如 Apache Tomcat®、Apache Geronimo（事务管理器）等。</font></font></p>
+</blockquote>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安全</font></font></h2><a id="user-content-security" class="anchor" aria-label="固定链接：安全" href="#security"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您可以相信 OFBiz 项目管理委员会成员和提交者会尽最大努力确保 OFBiz 免受外部攻击，并在发现漏洞后立即修复。尽管做出了这些努力，但如果您发现并想要报告安全问题，请在公开论坛上披露之前向 security @ ofbiz.apache.org 报告。</font></font></p>
+<blockquote>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：如果你计划使用 RMI、JNDI、JMX 或 Spring，或者其他 Java 类 OFBiz 不使用开箱即用 (OOTB)，请务必阅读此 Wiki 页面：</font></font><a href="https://cwiki.apache.org/confluence/display/OFBIZ/The+infamous+Java+serialization+vulnerability" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">臭名昭著的 Java 序列化漏洞</font></font></a></p>
+</blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">你可以在</font></font><a href="https://cwiki.apache.org/confluence/display/OFBIZ/Keeping+OFBiz+secure" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">保持 OFBiz 安全中找到更多关于 OFBiz 安全性的信息</font></font></a></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">构建系统语法</font></font></h2><a id="user-content-build-system-syntax" class="anchor" aria-label="永久链接：构建系统语法" href="#build-system-syntax"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">所有构建任务均使用 OFBiz 中嵌入的Gradle</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">构建系统执行</font><font style="vertical-align: inherit;">。要执行构建任务，请转到 OFBiz 顶级目录（文件夹）并从那里执行任务。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">操作系统语法</font></font></h3><a id="user-content-operating-system-syntax" class="anchor" aria-label="永久链接：操作系统语法" href="#operating-system-syntax"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Windows 和类 Unix 系统之间的任务语法略有不同</font></font></p>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">窗户</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：</font></font><code>gradlew &lt;tasks-in-here&gt;</code></p>
+</li>
+<li>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类Unix</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：</font></font><code>./gradlew &lt;tasks-in-here&gt;</code></p>
+</li>
+</ul>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于本文档的其余部分，我们将使用 Windows 语法，如果您使用的是类 Unix 系统，则需要</font></font><code>./</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gradle 中的任务类型</font></font></h3><a id="user-content-types-of-tasks-in-gradle" class="anchor" aria-label="永久链接：Gradle 中的任务类型" href="#types-of-tasks-in-gradle"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gradle 中为 OFBiz 设计了两种类型的任务：</font></font></p>
+<ul dir="auto">
+<li>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">标准任务</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：执行一般标准 Gradle 任务</font></font></p>
+</li>
+<li>
+<p dir="auto"><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz 服务器任务</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：执行 OFBiz 启动命令。这些任务以下列单词之一开头：</font></font></p>
+<ul dir="auto">
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ofbiz</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：标准服务器命令</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ofbizDebug</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：在远程调试模式下运行的服务器命令</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ofbizBackground</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">；在后台分叉进程中运行的服务器命令</font></font></li>
+</ul>
+</li>
+</ul>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">尖端：</font></font></p>
+<ul dir="auto">
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">服务器命令</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">需要</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">“引用”</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令。例如：</font></font><code>gradlew "ofbiz --help"</code></p>
+</li>
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">可以通过写出任务名称中每个单词的首字母来使用任务名称的快捷方式。但是，您不能使用 OFBiz 服务器任务的快捷方式。例如：</font></font><code>gradlew loadAdminUserLogin -PuserLoginId=myadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">=</font></font><code>gradlew lAUL -PuserLoginId=myadmin</code></p>
+</li>
+</ul>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">标准任务示例</font></font></h4><a id="user-content-example-standard-tasks" class="anchor" aria-label="永久链接：标准任务示例" href="#example-standard-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew build</code></p>
+<p dir="auto"><code>gradlew cleanAll loadDefault testIntegration</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz 服务器任务示例</font></font></h4><a id="user-content-example-ofbiz-server-tasks" class="anchor" aria-label="永久链接：OFBiz 服务器任务示例" href="#example-ofbiz-server-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew "ofbiz --help"</code></p>
+<p dir="auto"><code>gradlew "ofbizDebug --test"</code></p>
+<p dir="auto"><code>gradlew "ofbizBackground --start --portoffset 10000"</code></p>
+<p dir="auto"><code>gradlew "ofbiz --shutdown --portoffset 10000"</code></p>
+<p dir="auto"><code>gradlew ofbiz</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">（默认为--start）</font></font></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">混合任务示例（标准和 OFBiz 服务器）</font></font></h4><a id="user-content-example-mixed-tasks-standard-and-ofbiz-server" class="anchor" aria-label="永久链接：混合任务示例（标准和 OFBiz 服务器）" href="#example-mixed-tasks-standard-and-ofbiz-server"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew cleanAll loadDefault "ofbiz --start"</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">快速参考</font></font></h2><a id="user-content-quick-reference" class="anchor" aria-label="永久链接：快速参考" href="#quick-reference"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您可以使用以下常见任务列表作为控制系统的快速参考。本文档使用 Windows 任务语法，如果您使用的是类 Unix 系统，则需要将其添加
+</font></font><code>./</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">到 gradlew 即</font></font><code>./gradlew</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">帮助任务</font></font></h3><a id="user-content-help-tasks" class="anchor" aria-label="永久链接：帮助任务" href="#help-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">列出 OFBiz 服务器命令</font></font></h4><a id="user-content-list-ofbiz-server-commands" class="anchor" aria-label="永久链接：列出 OFBiz 服务器命令" href="#list-ofbiz-server-commands"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">列出所有可用来控制 OFBiz 服务器的命令</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --help"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">列出构建任务</font></font></h4><a id="user-content-list-build-tasks" class="anchor" aria-label="永久链接：列出构建任务" href="#list-build-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">列出构建系统的所有可用任务</font></font></p>
+<p dir="auto"><code>gradlew tasks</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">列出构建项目</font></font></h4><a id="user-content-list-build-projects" class="anchor" aria-label="永久链接：列出构建项目" href="#list-build-projects"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">列出构建系统中所有可用的项目</font></font></p>
+<p dir="auto"><code>gradlew projects</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gradle 构建系统帮助</font></font></h4><a id="user-content-gradle-build-system-help" class="anchor" aria-label="永久链接：Gradle 构建系统帮助" href="#gradle-build-system-help"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">显示 Gradle 构建系统的用法和选项</font></font></p>
+<p dir="auto"><code>gradlew --help</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">服务器命令任务</font></font></h3><a id="user-content-server-command-tasks" class="anchor" aria-label="永久链接：服务器命令任务" href="#server-command-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">启动 OFBiz</font></font></h4><a id="user-content-start-ofbiz-1" class="anchor" aria-label="永久链接: 启动 OFBiz" href="#start-ofbiz-1"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew "ofbiz --start"</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">start 是默认的服务器任务，因此这也有效：</font></font></p>
+<p dir="auto"><code>gradlew ofbiz</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">关闭 OFBiz</font></font></h4><a id="user-content-shutdown-ofbiz" class="anchor" aria-label="永久链接：关闭 OFBiz" href="#shutdown-ofbiz"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew "ofbiz --shutdown"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">获取 OFBiz 状态</font></font></h4><a id="user-content-get-ofbiz-status" class="anchor" aria-label="永久链接: 获取 OFBiz 状态" href="#get-ofbiz-status"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew "ofbiz --status"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">强制关闭 OFBiz</font></font></h4><a id="user-content-force-ofbiz-shutdown" class="anchor" aria-label="永久链接：强制关闭 OFBiz" href="#force-ofbiz-shutdown"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">通过调用适当的操作系统 kill 命令终止所有正在运行的 OFBiz 服务器实例。如果 --shutdown 命令不起作用，请使用此命令强制终止 OFBiz。通常在 OFBiz 中加载数据或测试期间需要这样做。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">警告：使用此命令时要小心，因为强制终止可能会导致状态/数据不一致</font></font></p>
+<p dir="auto"><code>gradlew terminateOfbiz</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以远程调试模式启动 OFBiz</font></font></h4><a id="user-content-start-ofbiz-in-remote-debug-mode" class="anchor" aria-label="永久链接：以远程调试模式启动 OFBiz" href="#start-ofbiz-in-remote-debug-mode"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以远程调试模式启动 OFBiz，并等待调试器或 IDE 连接到端口</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5005</font></font></strong></p>
+<p dir="auto"><code>gradlew "ofbizDebug --start"</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或者</font></font></p>
+<p dir="auto"><code>gradlew ofbizDebug</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在不同的端口上启动 OFBiz</font></font></h4><a id="user-content-start-ofbiz-on-a-different-port" class="anchor" aria-label="永久链接：在不同的端口上启动 OFBiz" href="#start-ofbiz-on-a-different-port"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">启动网络端口的 OFBiz，偏移量由 --portoffset 参数提供的范围决定</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --start --portoffset 10000"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在后台启动 OFBiz</font></font></h4><a id="user-content-start-ofbiz-in-the-background" class="anchor" aria-label="永久链接：在后台启动 OFBiz" href="#start-ofbiz-in-the-background"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><strong><font style="vertical-align: inherit;">通过将其分叉到新进程并将输出重定向到runtime/logs/console.log</font></strong><font style="vertical-align: inherit;">在后台启动OFBiz</font></font><strong><font style="vertical-align: inherit;"></font></strong></p>
+<p dir="auto"><code>gradlew "ofbizBackground --start"</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或者</font></font></p>
+<p dir="auto"><code>gradlew ofbizBackground</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以偏移端口，例如：</font></font></p>
+<p dir="auto"><code>gradlew "ofbizBackground --start --portoffset 10000"</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">数据加载任务</font></font></h3><a id="user-content-data-loading-tasks" class="anchor" aria-label="永久链接：数据加载任务" href="#data-loading-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz包含以下数据读取器类型：</font></font></p>
+<ul dir="auto">
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">种子</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：OFBiz 和外部种子数据 - 与源一起维护，并在系统部署更新时更新</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">seed-initial</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：OFBiz 和外部种子数据 - 与其他种子数据一样与源一起维护，但仅在最初加载，并且在系统更新时不会更新，除非手动检查每一行</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">demo</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：OFBiz 仅演示数据</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ext</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：外部通用数据（自定义）</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ext-test</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：外部测试数据（自定义）</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ext-demo</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：外部演示数据（自定义）</font></font></li>
+</ul>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您可以选择使用以下语法传递哪些数据读取器：</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data readers=&lt;readers-here-comma-separated&gt;"</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">例子：</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data readers=seed,seed-initial,ext,ext-demo"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载默认 OFBiz 数据</font></font></h4><a id="user-content-load-default-ofbiz-data" class="anchor" aria-label="永久链接：加载默认 OFBiz 数据" href="#load-default-ofbiz-data"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载默认数据集；用于初始加载通用 OFBiz 数据。可用于开发、测试、演示等目的。请注意，执行此任务可能会导致您选择的数据库中的数据被覆盖。在生产环境中请谨慎使用。默认数据集由数据源使用 read-data 属性定义，后跟数据集的名称，放入“entityengine.xml”文件的数据源元素中。</font></font></p>
+<p dir="auto"><code>gradlew loadDefault</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或者</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载种子数据</font></font></h4><a id="user-content-load-seed-data" class="anchor" aria-label="永久链接：加载种子数据" href="#load-seed-data"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">仅加载种子数据（不是 seed-initial、demo、ext* 或其他任何数据）；用于在代码更新后重新加载种子数据，因为它通常与代码一起维护，并且需要同步运行</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data readers=seed"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载扩展数据</font></font></h4><a id="user-content-load-ext-data" class="anchor" aria-label="永久链接：加载扩展数据" href="#load-ext-data"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载种子、种子初始和扩展数据；用于手动/通用测试、开发或使用基于库存 OFBiz 的派生系统投入生产，其中扩展数据基本上取代了演示数据</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data readers=seed,seed-initial,ext"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载外部测试数据</font></font></h4><a id="user-content-load-ext-test-data" class="anchor" aria-label="永久链接：加载外部测试数据" href="#load-ext-test-data"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加载种子、种子初始、扩展和扩展测试数据；用于使用基于股票 OFBiz 的派生系统进行自动测试</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data readers=seed,seed-initial,ext,ext-test"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">从实体文件加载数据</font></font></h4><a id="user-content-load-data-from-an-entity-file" class="anchor" aria-label="永久链接：从实体文件加载数据" href="#load-data-from-an-entity-file"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">从保存实体数据的 XML 文件加载数据。</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --load-data file=foo/bar/FileNameHere.xml"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创建新租户</font></font></h4><a id="user-content-create-a-new-tenant" class="anchor" aria-label="永久链接：创建新租户" href="#create-a-new-tenant"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在您的环境中创建一个新租户，创建委托人，使用管理员用户和密码加载初始数据（需要在 general.properties 中设置 multitenant=Y）。传递以下项目参数：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">租户ID：必填</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">tenantName：可选，默认为tenantId的值</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">domainName：可选，默认为 org.apache.ofbiz</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">tenantReaders：可选，默认值为seed、seed-initial、demo</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">dbPlatform：可选，D（Derby）、M（MySQL）、O（Oracle）、P（PostgreSQL）（默认 D）</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">dbIp：可选，数据库的ip地址</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">dbUser：可选，数据库的用户名</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">dbPassword：可选，数据库的密码</font></font></li>
+</ul>
+<p dir="auto"><code>gradlew createTenant -PtenantId=mytenant</code></p>
+<p dir="auto"><code>gradlew createTenant -PtenantId=mytenant -PtenantName="My Name" -PdomainName=com.example -PtenantReaders=seed,seed-initial,ext -PdbPlatform=M -PdbIp=127.0.0.1 -PdbUser=mydbuser -PdbPassword=mydbpass</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果运行成功，系统将创建一个具有以下特征的新租户：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">委托人：default#${tenandId} （例如 default#mytenant）</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理员用户：${tenantId}-admin （例如 mytenant-admin）</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">管理员用户密码：ofbiz</font></font></li>
+</ul>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为特定租户加载数据</font></font></h4><a id="user-content-load-data-for-a-specific-tenant" class="anchor" aria-label="永久链接：为特定租户加载数据" href="#load-data-for-a-specific-tenant"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在多租户环境中加载特定租户的数据。请注意，您必须在 general.properties 中设置 multitenant=Y，并传递以下项目参数：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">租户ID（必填）</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">tenantReaders（可选）</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">tenantComponent（可选）</font></font></li>
+</ul>
+<p dir="auto"><code>gradlew loadTenant -PtenantId=mytenant</code></p>
+<p dir="auto"><code>gradlew loadTenant -PtenantId=mytenant -PtenantReaders=seed,seed-initial,demo -PtenantComponent=base</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">测试任务</font></font></h3><a id="user-content-testing-tasks" class="anchor" aria-label="永久链接：测试任务" href="#testing-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">执行所有单元测试</font></font></h4><a id="user-content-execute-all-unit-tests" class="anchor" aria-label="永久链接：执行所有单元测试" href="#execute-all-unit-tests"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew test</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">执行所有集成测试</font></font></h4><a id="user-content-execute-all-integration-tests" class="anchor" aria-label="永久链接：执行所有集成测试" href="#execute-all-integration-tests"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew testIntegration</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或者</font></font></p>
+<p dir="auto"><code>gradlew 'ofbiz --test'</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">执行集成测试用例</font></font></h4><a id="user-content-execute-an-integration-test-case" class="anchor" aria-label="永久链接：执行集成测试用例" href="#execute-an-integration-test-case"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行测试用例，在这个例子中，组件是“entity”，用例名称是“entity-tests”</font></font></p>
+<p dir="auto"><code>gradlew "ofbiz --test component=entity --test case=entity-tests"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在调试模式下执行集成测试用例</font></font></h4><a id="user-content-execute-an-integration-test-case-in-debug-mode" class="anchor" aria-label="永久链接：在调试模式下执行集成测试用例" href="#execute-an-integration-test-case-in-debug-mode"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">监听端口</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5005</font></font></strong></p>
+<p dir="auto"><code>gradlew "ofbizDebug --test component=entity --test case=entity-tests"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">执行集成测试套件</font></font></h4><a id="user-content-execute-an-integration-test-suite" class="anchor" aria-label="永久链接：执行集成测试套件" href="#execute-an-integration-test-suite"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew "ofbiz --test component=widget --test suitename=org.apache.ofbiz.widget.test.WidgetMacroLibraryTests"</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在调试模式下执行集成测试套件</font></font></h4><a id="user-content-execute-an-integration-test-suite-in-debug-mode" class="anchor" aria-label="永久链接：在调试模式下执行集成测试套件" href="#execute-an-integration-test-suite-in-debug-mode"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">监听端口</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5005</font></font></strong></p>
+<p dir="auto"><code>gradlew "ofbizDebug --test component=widget --test suitename=org.apache.ofbiz.widget.test.WidgetMacroLibraryTests"</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">杂项任务</font></font></h3><a id="user-content-miscellaneous-tasks" class="anchor" aria-label="永久链接：杂项任务" href="#miscellaneous-tasks"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">启动 Gradle 的图形用户界面</font></font></h4><a id="user-content-launch-a-graphical-user-interface-of-gradle" class="anchor" aria-label="永久链接：启动 Gradle 的图形用户界面" href="#launch-a-graphical-user-interface-of-gradle"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">这是 Gradle 的一个非常方便的功能，它允许用户通过 swing GUI 与 Gradle 交互。您可以将常用命令保存在收藏夹列表中，以便经常重复使用。</font></font></p>
+<p dir="auto"><code>gradlew --gui</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在干净的系统上运行所有测试</font></font></h4><a id="user-content-run-all-tests-on-a-clean-system" class="anchor" aria-label="永久链接：在干净的系统上运行所有测试" href="#run-all-tests-on-a-clean-system"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew cleanAll loadDefault testIntegration</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">清除所有生成的工件</font></font></h4><a id="user-content-clean-all-generated-artifacts" class="anchor" aria-label="永久链接：清除所有生成的工件" href="#clean-all-generated-artifacts"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew cleanAll</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">刷新生成的工件</font></font></h4><a id="user-content-refresh-the-generated-artifacts" class="anchor" aria-label="永久链接：刷新生成的工件" href="#refresh-the-generated-artifacts"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><code>gradlew clean build</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创建管理员用户帐户</font></font></h4><a id="user-content-create-an-admin-user-account" class="anchor" aria-label="永久链接：创建管理员用户帐户" href="#create-an-admin-user-account"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创建一个管理员用户，登录名为 MyUserName，默认密码为“ofbiz”。首次登录时，OFBiz 将要求更改默认密码</font></font></p>
+<p dir="auto"><code>gradlew loadAdminUserLogin -PuserLoginId=MyUserName</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 Xlint 输出编译 Java</font></font></h4><a id="user-content-compile-java-using-xlint-output" class="anchor" aria-label="永久链接：使用 Xlint 输出编译 Java" href="#compile-java-using-xlint-output"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Xlint 打印编译器检测到的所有警告的输出</font></font></p>
+<p dir="auto"><code>gradlew -PXlint build</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行 OWASP 工具来识别依赖漏洞（CVE）</font></font></h4><a id="user-content-run-owasp-tool-to-identify-dependency-vulnerabilities-cves" class="anchor" aria-label="永久链接：运行 OWASP 工具来识别依赖漏洞 (CVE)" href="#run-owasp-tool-to-identify-dependency-vulnerabilities-cves"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以下命令激活 gradle 插件 (OWASP) 并识别和报告 OFBiz 库依赖项中的已知漏洞 (CVE)。此命令需要很长时间才能执行，因为它需要下载所有插件依赖项，并且 CVE 识别过程也很耗时</font></font></p>
+<p dir="auto"><code>gradlew -PenableOwasp dependencyCheck</code></p>
+<div class="markdown-heading" dir="auto"><h4 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为 OFBiz 设置 eclipse 项目</font></font></h4><a id="user-content-setup-eclipse-project-for-ofbiz" class="anchor" aria-label="永久链接：为 OFBiz 设置 eclipse 项目" href="#setup-eclipse-project-for-ofbiz"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在 eclipse 上设置 OFBiz 非常简单，只需运行以下命令，然后将项目导入 eclipse 即可。此命令将为 eclipse 生成必要的</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">.classpath</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">.project</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文件，还将使外部库的源代码在 eclipse 中可用（即您可以通过 Ctrl + 单击查看源代码）</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">第一次运行此命令时，它将需要很长时间才能执行，因为它将下载项目依赖项可用的源包。</font></font></p>
+<p dir="auto"><code>gradlew eclipse</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz插件系统</font></font></h2><a id="user-content-ofbiz-plugin-system" class="anchor" aria-label="永久链接: OFBiz 插件系统" href="#ofbiz-plugin-system"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz 通过插件提供扩展机制。插件是位于插件目录中的标准 OFBiz 组件。可以手动添加插件或从 maven 存储库获取插件。管理插件的标准任务如下所列。</font></font></p>
+<blockquote>
+<p dir="auto"><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：OFBiz 插件版本遵循</font></font><a href="http://semver.org/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">语义版本 2.0.0</font></font></a></p>
+</blockquote>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">自动拉取（下载并安装）插件</font></font></h3><a id="user-content-pull-download-and-install-a-plugin-automatically" class="anchor" aria-label="永久链接：自动拉取（下载并安装）插件" href="#pull-download-and-install-a-plugin-automatically"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下载一个插件及其所有依赖项（插件），然后从依赖项开始到插件本身结束逐个安装它们。</font></font></p>
+<p dir="auto"><code>gradlew pullPlugin -PdependencyId="org.apache.ofbiz.plugin:myplugin:0.1.0"</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果插件位于自定义 maven 存储库（不是 jcenter 或 localhost）中，那么您可以使用以下命令指定存储库：</font></font></p>
+<p dir="auto"><code>gradlew pullPlugin -PrepoUrl="http://www.example.com/custom-maven" -PdependencyId="org.apache.ofbiz.plugin:myplugin:0.1.0"</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果您需要用户名和密码来访问自定义存储库：</font></font></p>
+<p dir="auto"><code>gradlew pullPlugin -PrepoUrl="http://www.example.com/custom-maven" -PrepoUser=myuser -PrepoPassword=mypassword -PdependencyId="org.apache.ofbiz.plugin:myplugin:0.1.0"</code></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">拉取源插件</font></font></h3><a id="user-content-pull-a-source-plugin" class="anchor" aria-label="永久链接：拉取源插件" href="#pull-a-source-plugin"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">从源代码控制（当前为 subversion）下载插件并将其放在插件目录中。这在处理主干分支时非常有用，因为它需要最新版本的插件</font></font></p>
+<p dir="auto"><code>gradlew pullPluginSource -PpluginId=ecommerce</code></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安装插件</font></font></h3><a id="user-content-install-a-plugin" class="anchor" aria-label="永久链接：安装插件" href="#install-a-plugin"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果您有一个名为 mycustomplugin 的插件并想要在 OFBiz 中安装它，请按照以下说明操作：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果插件已压缩，请将其解压缩</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将解压的目录放入 /plugins</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行以下命令</font></font></li>
+</ul>
+<p dir="auto"><code>gradlew installPlugin -PpluginId=myplugin</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果插件的 build.gradle 文件中存在，上述命令将执行该任务“install”。</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">卸载插件</font></font></h3><a id="user-content-uninstall-a-plugin" class="anchor" aria-label="永久链接：卸载插件" href="#uninstall-a-plugin"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果您有一个名为 mycustomplugin 的现有插件并且希望卸载，请运行以下命令</font></font></p>
+<p dir="auto"><code>gradlew uninstallPlugin -PpluginId=myplugin</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果插件的 build.gradle 文件中存在，则上述命令将执行该任务“卸载”</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">删除插件</font></font></h3><a id="user-content-remove-a-plugin" class="anchor" aria-label="永久链接：删除插件" href="#remove-a-plugin"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">调用现有插件的</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">uninstallPlugin</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，然后将其从文件系统中删除</font></font></p>
+<p dir="auto"><code>gradlew removePlugin -PpluginId=myplugin</code></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创建新插件</font></font></h3><a id="user-content-create-a-new-plugin" class="anchor" aria-label="永久链接：创建新插件" href="#create-a-new-plugin"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创建一个新的插件。传递以下项目参数：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">pluginId：必填</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">pluginResourceName：可选，默认为pluginId的大写值</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">webappName：可选，默认为pluginId的值</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">basePermission：可选，默认为pluginId的大写值</font></font></li>
+</ul>
+<p dir="auto"><code>gradlew createPlugin -PpluginId=myplugin</code></p>
+<p dir="auto"><code>gradlew createPlugin -PpluginId=myplugin -PpluginResourceName=MyPlugin -PwebappName=mypluginweb -PbasePermission=MYSECURITY</code></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">上述命令在 /plugins/myplugin 中创建一个新插件</font></font></p>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将插件推送到存储库</font></font></h3><a id="user-content-push-a-plugin-to-a-repository" class="anchor" aria-label="永久链接：将插件推送到存储库" href="#push-a-plugin-to-a-repository"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">此任务将 OFBiz 插件发布到 maven 包中，然后将其上传到 maven 存储库。目前，推送仅限于本地 maven 存储库（正在进行中）。要推送插件，请传递以下参数：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">pluginId：必填</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">groupId：可选，默认为 org.apache.ofbiz.plugin</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">pluginVersion：可选，默认为 0.1.0-SNAPSHOT</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">pluginDescription：可选，默认为“OFBiz 插件发布 ${pluginId}”</font></font></li>
+</ul>
+<p dir="auto"><code>gradlew pushPlugin -PpluginId=myplugin</code></p>
+<p dir="auto"><code>gradlew pushPlugin -PpluginId=mycompany -PpluginGroup=com.mycompany.ofbiz.plugin -PpluginVersion=1.2.3 -PpluginDescription="Introduce special functionality X"</code></p>
+<hr>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">实用技巧</font></font></h2><a id="user-content-useful-tips" class="anchor" aria-label="固定链接：实用技巧" href="#useful-tips"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<div class="markdown-heading" dir="auto"><h3 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">类 Unix 系统上的 Gradle tab 补全：</font></font></h3><a id="user-content-gradle-tab-completion-on-unix-like-systems" class="anchor" aria-label="永久链接：类 Unix 系统上的 Gradle tab 补全：" href="#gradle-tab-completion-on-unix-like-systems"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">要获得 Tab 补全（按 Tab 键自动完成 gradle 命令），您可以从下面的链接下载脚本并将其放在适合您系统的适当位置。</font></font></p>
+<p dir="auto"><a href="https://gist.github.com/Ea87/46401a96df31cd208a87"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gradle Tab 补全</font></font></a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">例如，在基于 debian 的系统上，您可以使用以下命令：</font></font></p>
+<p dir="auto"><code>sudo curl -L -s https://gist.github.com/Ea87/46401a96df31cd208a87/raw/gradle-tab-completion.bash -o /etc/bash_completion.d/gradle-tab-completion.bash</code></p>
+<div class="markdown-heading" dir="auto"><h2 tabindex="-1" class="heading-element" dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">加密通知</font></font></h2><a id="user-content-crypto-notice" class="anchor" aria-label="永久链接：加密通知" href="#crypto-notice"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">此发行版包含加密软件。您目前居住的国家/地区可能对加密软件的进口、拥有、使用和/或再出口到其他国家/地区有所限制。在使用任何加密软件之前，请检查您所在国家/地区有关进口、拥有、使用和再出口加密软件的法律、法规和政策，看看是否允许这样做。</font><font style="vertical-align: inherit;">有关更多信息，请访问</font></font><a href="http://www.wassenaar.org/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://www.wassenaar.org/ 。</font></font></a><font style="vertical-align: inherit;"></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">美国政府商务部工业和安全局 (BIS) 已将此软件归类为出口商品控制编号 (ECCN) 5D002.C.1，其中包括使用或执行非对称算法加密功能的信息安全软件。此 Apache 软件基金会发行版的形式和方式使其符合许可例外 ENC 技术软件不受限制 (TSU) 例外（参见 BIS 出口管理条例第 740.13 节）的出口要求，适用于目标代码和源代码。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下面提供了有关所包含的加密软件的更多详细信息：</font></font></p>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">OFBiz 中的各个类（包括 DesCrypt、HashCrypt 和 BlowFishCrypt）使用 Sun Java JDK API 中的库，包括 java.security.* 和 javax.crypto.*（JCE，Java 加密扩展 API）</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">其他类（如 HttpClient 和各种相关类）使用 JSSE（Java 安全套接字扩展）API</font></font></li>
+</ul>
+</article></div>
